@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ウツセバ クルー スキルダッシュボード</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --ink-2: #3a3a3a;
+    --ink-3: #767676;
+    --ink-4: #b0b0b0;
+    --surface: #ffffff;
+    --surface-1: #f7f7f5;
+    --surface-2: #f0efec;
+    --border: rgba(15,15,15,0.10);
+    --border-strong: rgba(15,15,15,0.18);
+    --blue: #2255cc;
+    --blue-light: #e8eefb;
+    --green: #1a7a52;
+    --green-light: #e5f4ed;
+    --amber: #b05c00;
+    --amber-light: #fdf1e2;
+    --purple: #4a2fa0;
+    --purple-light: #edeafb;
+    --coral: #c13a2a;
+    --coral-light: #fbeae8;
+    --teal: #1a6e6e;
+    --teal-light: #e5f3f3;
+    --accent: #2255cc;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    background: var(--surface-1);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--ink);
+    color: #fff;
+    padding: 48px 40px 40px;
+  }
+  .header-inner { max-width: 960px; margin: 0 auto; }
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.45);
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+  header h1 {
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  header h1 span { color: rgba(255,255,255,.35); }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,.5);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+  .header-meta {
+    margin-top: 28px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item { text-align: center; }
+  .meta-val {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+  .meta-label {
+    font-size: 11px;
+    color: rgba(255,255,255,.4);
+    margin-top: 4px;
+    letter-spacing: .04em;
+  }
+  .meta-divider {
+    width: 1px;
+    background: rgba(255,255,255,.12);
+    align-self: stretch;
+  }
+
+  /* ── Nav ── */
+  nav {
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--ink-3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: color .15s, border-color .15s;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 500; }
+
+  /* ── Main ── */
+  main { max-width: 960px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── Section header ── */
+  .section-header { margin-bottom: 28px; }
+  .section-eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .section-desc { font-size: 14px; color: var(--ink-3); margin-top: 6px; }
+
+  /* ── KPI row ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .kpi-label { font-size: 11px; color: var(--ink-3); letter-spacing: .04em; margin-bottom: 6px; }
+  .kpi-val { font-size: 28px; font-weight: 700; font-family: 'Inter', sans-serif; letter-spacing: -.03em; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--ink-4); margin-top: 5px; }
+  .kpi-accent .kpi-val { color: var(--blue); }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+    letter-spacing: .01em;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── Bar chart ── */
+  .bar-list { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 12px; color: var(--ink-2); width: 140px; flex-shrink: 0; text-align: right; }
+  .bar-track {
+    flex: 1;
+    height: 14px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-val { font-size: 12px; color: var(--ink-3); width: 28px; flex-shrink: 0; font-family: 'Inter', sans-serif; font-weight: 500; }
+
+  /* ── Tags ── */
+  .tag-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* ── Cluster ── */
+  .cluster-list { display: flex; flex-direction: column; }
+  .cluster-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .cluster-row:last-child { border-bottom: none; }
+  .cluster-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .cluster-body { flex: 1; }
+  .cluster-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .cluster-members { font-size: 12px; color: var(--ink-3); }
+  .cluster-count { font-size: 26px; font-weight: 700; font-family: 'Inter', sans-serif; letter-spacing: -.03em; color: var(--ink); flex-shrink: 0; align-self: center; }
+
+  /* ── Days chart ── */
+  .day-chart { display: flex; align-items: flex-end; gap: 10px; height: 120px; }
+  .day-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .day-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+  .day-bar { width: 100%; border-radius: 4px 4px 0 0; }
+  .day-count { font-size: 11px; font-weight: 500; color: var(--ink-2); font-family: 'Inter', sans-serif; }
+  .day-name { font-size: 12px; color: var(--ink-3); }
+
+  /* ── Donut ── */
+  .donut-wrap { display: flex; align-items: center; gap: 28px; }
+  .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .leg-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+  .leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .leg-val { font-family: 'Inter', sans-serif; font-weight: 500; margin-left: auto; color: var(--ink); }
+
+  /* ── Insight box ── */
+  .insight {
+    background: #eef2fb;
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #1a3070;
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+  .insight strong { font-weight: 600; }
+
+  /* ── Note ── */
+  .note {
+    font-size: 11px;
+    color: var(--ink-4);
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 0.5px solid var(--border);
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    font-size: 11px;
+    color: var(--ink-4);
+    border-top: 0.5px solid var(--border);
+    background: var(--surface);
+  }
+  footer strong { color: var(--ink-2); }
+
+  @media (max-width: 640px) {
+    header { padding: 32px 20px 28px; }
+    main { padding: 24px 20px 60px; }
+    .nav-inner { padding: 0 16px; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .bar-label { width: 100px; font-size: 11px; }
+    .donut-wrap { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-eyebrow">Utsuseba AIX事業部 ／ Crew Skill Dashboard</div>
+    <h1>ウツセバ<br><span>クルー</span>スキルダッシュボード</h1>
+    <p class="header-sub">クルー全員の職種・スキル・対応可能領域を集計し、個人情報を除いて可視化したデータです。</p>
+    <div class="header-meta">
+      <div class="meta-item">
+        <div class="meta-val" style="color:#fff">66</div>
+        <div class="meta-label">総クルー数</div>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <div class="meta-val" style="color:#fff">47</div>
+        <div class="meta-label">ウツセバクルー</div>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <div class="meta-val" style="color:#fff">19</div>
+        <div class="meta-label">パートナー・スポット</div>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <div class="meta-val" style="color:#6699ff">12</div>
+        <div class="meta-label">仕事募集中</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showSection('overview')">概要</button>
+    <button class="nav-tab" onclick="showSection('skills')">対応可能領域</button>
+    <button class="nav-tab" onclick="showSection('detail')">得意・経験業務</button>
+    <button class="nav-tab" onclick="showSection('challenge')">チャレンジしたい業務</button>
+    <button class="nav-tab" onclick="showSection('cluster')">スキルクラスター</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ── OVERVIEW ── -->
+<section id="sec-overview" class="section active">
+  <div class="section-header">
+    <div class="section-eyebrow">Overview</div>
+    <div class="section-title">クルー全体の概況</div>
+    <div class="section-desc">職種・チーム・稼働状態・対応曜日をひと目で把握できます。</div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">総クルー数</div><div class="kpi-val">66</div><div class="kpi-sub">アクティブ在籍</div></div>
+    <div class="kpi kpi-accent"><div class="kpi-label">仕事募集中</div><div class="kpi-val">12</div><div class="kpi-sub">即アサイン可能</div></div>
+    <div class="kpi"><div class="kpi-label">業務量ちょうどいい</div><div class="kpi-val">6</div><div class="kpi-sub">稼働中・安定</div></div>
+    <div class="kpi"><div class="kpi-label">平日稼働可能</div><div class="kpi-val">50+</div><div class="kpi-sub">月〜金カバー率</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">職種分布（複数選択あり）</div>
+      <div class="bar-list">
+        <div class="bar-row"><div class="bar-label">オンライン秘書</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#2255cc"></div></div><div class="bar-val">18</div></div>
+        <div class="bar-row"><div class="bar-label">AI業務ディレクター</div><div class="bar-track"><div class="bar-fill" style="width:61%;background:#1a7a52"></div></div><div class="bar-val">11</div></div>
+        <div class="bar-row"><div class="bar-label">AIセミナー講師</div><div class="bar-track"><div class="bar-fill" style="width:44%;background:#b05c00"></div></div><div class="bar-val">8</div></div>
+        <div class="bar-row"><div class="bar-label">ディレクター</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#4a2fa0"></div></div><div class="bar-val">6</div></div>
+        <div class="bar-row"><div class="bar-label">デザイナー</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:#c13a2a"></div></div><div class="bar-val">4</div></div>
+        <div class="bar-row"><div class="bar-label">AIエンジニア</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:#1a6e6e"></div></div><div class="bar-val">4</div></div>
+        <div class="bar-row"><div class="bar-label">ライター</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:#7a4a00"></div></div><div class="bar-val">4</div></div>
+        <div class="bar-row"><div class="bar-label">情シス</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#767676"></div></div><div class="bar-val">3</div></div>
+        <div class="bar-row"><div class="bar-label">採用</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#767676"></div></div><div class="bar-val">3</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">採用枠の内訳</div>
+      <div class="donut-wrap">
+        <canvas id="donutChart" width="140" height="140" role="img" aria-label="採用枠の内訳: ウツセバクルー47名、業務委託11名、スポット3名、藤澤紹介1名、未分類4名"></canvas>
+        <div class="donut-legend">
+          <div class="leg-item"><span class="leg-sq" style="background:#2255cc"></span>ウツセバクルー<span class="leg-val">47</span></div>
+          <div class="leg-item"><span class="leg-sq" style="background:#1a7a52"></span>業務委託パートナー<span class="leg-val">11</span></div>
+          <div class="leg-item"><span class="leg-sq" style="background:#b05c00"></span>スポットクルー<span class="leg-val">3</span></div>
+          <div class="leg-item"><span class="leg-sq" style="background:#4a2fa0"></span>藤澤さん紹介<span class="leg-val">1</span></div>
+          <div class="leg-item"><span class="leg-sq" style="background:#c0bdb4"></span>未分類<span class="leg-val">4</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">対応可能曜日 分布</div>
+    <div class="day-chart">
+      <div class="day-col"><div class="day-count">52</div><div class="day-bar-wrap"><div class="day-bar" style="height:100%;background:#2255cc"></div></div><div class="day-name">月</div></div>
+      <div class="day-col"><div class="day-count">52</div><div class="day-bar-wrap"><div class="day-bar" style="height:100%;background:#2255cc"></div></div><div class="day-name">火</div></div>
+      <div class="day-col"><div class="day-count">50</div><div class="day-bar-wrap"><div class="day-bar" style="height:96%;background:#2255cc"></div></div><div class="day-name">水</div></div>
+      <div class="day-col"><div class="day-count">50</div><div class="day-bar-wrap"><div class="day-bar" style="height:96%;background:#2255cc"></div></div><div class="day-name">木</div></div>
+      <div class="day-col"><div class="day-count">51</div><div class="day-bar-wrap"><div class="day-bar" style="height:98%;background:#2255cc"></div></div><div class="day-name">金</div></div>
+      <div class="day-col"><div class="day-count">30</div><div class="day-bar-wrap"><div class="day-bar" style="height:58%;background:#b05c00"></div></div><div class="day-name">土</div></div>
+      <div class="day-col"><div class="day-count">26</div><div class="day-bar-wrap"><div class="day-bar" style="height:50%;background:#c13a2a"></div></div><div class="day-name">日</div></div>
+      <div class="day-col"><div class="day-count">26</div><div class="day-bar-wrap"><div class="day-bar" style="height:50%;background:#c13a2a"></div></div><div class="day-name">祝</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">所属チーム別人数</div>
+    <div class="bar-list">
+      <div class="bar-row"><div class="bar-label">秘書チーム</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#2255cc"></div></div><div class="bar-val">12</div></div>
+      <div class="bar-row"><div class="bar-label">採用チーム</div><div class="bar-track"><div class="bar-fill" style="width:67%;background:#1a7a52"></div></div><div class="bar-val">8</div></div>
+      <div class="bar-row"><div class="bar-label">人事チーム</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#b05c00"></div></div><div class="bar-val">4</div></div>
+      <div class="bar-row"><div class="bar-label">超火力委員会</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#4a2fa0"></div></div><div class="bar-val">4</div></div>
+      <div class="bar-row"><div class="bar-label">税理士AI大学</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#1a6e6e"></div></div><div class="bar-val">4</div></div>
+      <div class="bar-row"><div class="bar-label">業務革命委員会</div><div class="bar-track"><div class="bar-fill" style="width:25%;background:#c13a2a"></div></div><div class="bar-val">3</div></div>
+      <div class="bar-row"><div class="bar-label">ウリアゲAIX</div><div class="bar-track"><div class="bar-fill" style="width:25%;background:#c13a2a"></div></div><div class="bar-val">3</div></div>
+      <div class="bar-row"><div class="bar-label">カクヤクAIX</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#767676"></div></div><div class="bar-val">2</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="sec-skills" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Capabilities</div>
+    <div class="section-title">対応可能領域</div>
+    <div class="section-desc">クルーが登録している対応可能領域を集計しました。</div>
+  </div>
+  <div class="card">
+    <div class="card-title">対応可能領域 ランキング（全クルー集計）</div>
+    <div class="bar-list">
+      <div class="bar-row"><div class="bar-label">AI</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#2255cc"></div></div><div class="bar-val">35</div></div>
+      <div class="bar-row"><div class="bar-label">ライティング</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:#2255cc"></div></div><div class="bar-val">21</div></div>
+      <div class="bar-row"><div class="bar-label">セミナー講師</div><div class="bar-track"><div class="bar-fill" style="width:49%;background:#1a7a52"></div></div><div class="bar-val">17</div></div>
+      <div class="bar-row"><div class="bar-label">ディレクター</div><div class="bar-track"><div class="bar-fill" style="width:46%;background:#1a7a52"></div></div><div class="bar-val">16</div></div>
+      <div class="bar-row"><div class="bar-label">コンサルティング</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:#b05c00"></div></div><div class="bar-val">15</div></div>
+      <div class="bar-row"><div class="bar-label">SNSマーケティング</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:#b05c00"></div></div><div class="bar-val">15</div></div>
+      <div class="bar-row"><div class="bar-label">研修講師</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:#b05c00"></div></div><div class="bar-val">15</div></div>
+      <div class="bar-row"><div class="bar-label">動画編集</div><div class="bar-track"><div class="bar-fill" style="width:40%;background:#4a2fa0"></div></div><div class="bar-val">14</div></div>
+      <div class="bar-row"><div class="bar-label">セールス</div><div class="bar-track"><div class="bar-fill" style="width:37%;background:#4a2fa0"></div></div><div class="bar-val">13</div></div>
+      <div class="bar-row"><div class="bar-label">マーケティング</div><div class="bar-track"><div class="bar-fill" style="width:34%;background:#c13a2a"></div></div><div class="bar-val">12</div></div>
+      <div class="bar-row"><div class="bar-label">WEBデザイン</div><div class="bar-track"><div class="bar-fill" style="width:23%;background:#767676"></div></div><div class="bar-val">8</div></div>
+      <div class="bar-row"><div class="bar-label">WEBディレクション</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#767676"></div></div><div class="bar-val">5</div></div>
+      <div class="bar-row"><div class="bar-label">動画撮影</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#767676"></div></div><div class="bar-val">5</div></div>
+      <div class="bar-row"><div class="bar-label">システムエンジニアリング</div><div class="bar-track"><div class="bar-fill" style="width:11%;background:#767676"></div></div><div class="bar-val">4</div></div>
+      <div class="bar-row"><div class="bar-label">写真撮影</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:#767676"></div></div><div class="bar-val">3</div></div>
+    </div>
+    <div class="note">対応可能領域は各クルーが登録した複数選択項目の集計値です。1名が複数領域を登録している場合があります。</div>
+  </div>
+  <div class="insight"><strong>注目：</strong>「AI」領域が35名と断トツ1位。ウツセバ全体のAI化が組織レベルで進んでいることを示しています。次いでライティング・講師・ディレクションと、クライアント支援に必要な領域が厚く揃っています。</div>
+</section>
+
+<!-- ── DETAIL ── -->
+<section id="sec-detail" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Skills & Experience</div>
+    <div class="section-title">得意・経験業務</div>
+    <div class="section-desc">クルーが自己申告した得意業務・経験業務をカテゴリー別に整理しました。</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🗂 バックオフィス・事務系</div>
+      <div class="tag-wrap">
+        <span class="tag" style="background:#e8eefb;color:#1a3070">議事録作成</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">スケジュール管理</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">資料作成</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">マニュアル作成</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">タスク管理</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">スプレッドシート</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">Excel</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">請求書・見積書</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">経理補助</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">リサーチ業務</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">情報整理</span>
+        <span class="tag" style="background:#e8eefb;color:#1a3070">進捗管理</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🤖 AI・エンジニアリング系</div>
+      <div class="tag-wrap">
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">プロンプト作成</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">GPTs開発</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">AIエージェント制作</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">n8n / Dify</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">Claude Code</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">GAS</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">NotebookLM</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">業務自動化</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">AI導入支援</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">システム設計</span>
+        <span class="tag" style="background:#e5f4ed;color:#0d4a2a">Notion設計</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎯 ディレクション・PM系</div>
+      <div class="tag-wrap">
+        <span class="tag" style="background:#edeafb;color:#2a1570">プロジェクト管理</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">ヒアリング・要件定義</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">業務フロー設計</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">業務改善</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">標準化・手順書化</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">合意形成</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">WEBディレクション</span>
+        <span class="tag" style="background:#edeafb;color:#2a1570">属人化解消</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 営業・マーケ・コンサル系</div>
+      <div class="tag-wrap">
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">顧客ヒアリング</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">セールス</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">SNS運用代行</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">SEOライティング</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">コンサルティング</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">採用支援</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">キャリアコーチング</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">LINE運用</span>
+        <span class="tag" style="background:#fdf1e2;color:#6b3800">事業開発</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎨 クリエイティブ系</div>
+      <div class="tag-wrap">
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">Canvaデザイン</span>
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">動画編集</span>
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">配信動画作成</span>
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">写真撮影・編集</span>
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">WEBデザイン</span>
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">DTPデザイン</span>
+        <span class="tag" style="background:#fbeae8;color:#6b1a12">AI画像生成</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎤 研修・教育・講師系</div>
+      <div class="tag-wrap">
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">AIセミナー講師</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">研修企画・運営</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">ファシリテーター</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">人材開発</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">採用面接</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">語学講師</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">通訳・翻訳</span>
+        <span class="tag" style="background:#e5f3f3;color:#0a3e3e">英語対応</span>
+      </div>
+    </div>
+  </div>
+  <div class="note">得意・経験業務はクルーが自由記入した内容をキーワード抽出・カテゴリー分類したものです。個人氏名は含みません。</div>
+</section>
+
+<!-- ── CHALLENGE ── -->
+<section id="sec-challenge" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Growth Potential</div>
+    <div class="section-title">チャレンジしたい業務</div>
+    <div class="section-desc">クルーが「次にやってみたい」と回答した業務の傾向です。育成計画・アサイン設計の参考にできます。</div>
+  </div>
+  <div class="card">
+    <div class="card-title">チャレンジしたい業務 上位10項目</div>
+    <div class="bar-list">
+      <div class="bar-row"><div class="bar-label">AIエンジニア領域</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#2255cc"></div></div><div class="bar-val">10</div></div>
+      <div class="bar-row"><div class="bar-label">業務自動化・実装</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:#2255cc"></div></div><div class="bar-val">8</div></div>
+      <div class="bar-row"><div class="bar-label">AI業務ディレクター</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:#1a7a52"></div></div><div class="bar-val">6</div></div>
+      <div class="bar-row"><div class="bar-label">デザイン制作</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#b05c00"></div></div><div class="bar-val">5</div></div>
+      <div class="bar-row"><div class="bar-label">SNS運用・マーケ</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#b05c00"></div></div><div class="bar-val">5</div></div>
+      <div class="bar-row"><div class="bar-label">企業AI導入コンサル</div><div class="bar-track"><div class="bar-fill" style="width:40%;background:#4a2fa0"></div></div><div class="bar-val">4</div></div>
+      <div class="bar-row"><div class="bar-label">GPTs・チャットボット</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#767676"></div></div><div class="bar-val">3</div></div>
+      <div class="bar-row"><div class="bar-label">動画編集</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#767676"></div></div><div class="bar-val">3</div></div>
+      <div class="bar-row"><div class="bar-label">採用・人事</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#767676"></div></div><div class="bar-val">3</div></div>
+      <div class="bar-row"><div class="bar-label">経営企画・事業開発</div><div class="bar-track"><div class="bar-fill" style="width:20%;background:#767676"></div></div><div class="bar-val">2</div></div>
+    </div>
+  </div>
+  <div class="insight">
+    <strong>育成機会のヒント：</strong>「AIエンジニア領域」へのチャレンジ希望が最多（10名）。現在の秘書・ディレクター層がAI技術職へのキャリアアップを強く志向しています。社内育成プログラムの重点投資領域として活用できます。次いで「業務自動化・実装」（8名）も多く、n8n・GAS・Claude Codeなどの実装スキル研修への需要が高い状態です。
+  </div>
+</section>
+
+<!-- ── CLUSTER ── -->
+<section id="sec-cluster" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Skill Clusters</div>
+    <div class="section-title">スキルクラスター</div>
+    <div class="section-desc">職種・得意業務・対応領域を総合的に判断し、6つのクラスターに分類しました。</div>
+  </div>
+  <div class="card">
+    <div class="cluster-list">
+      <div class="cluster-row">
+        <div class="cluster-icon" style="background:#e8eefb">🤖</div>
+        <div class="cluster-body">
+          <div class="cluster-name">AI・エンジニア特化型</div>
+          <div class="cluster-members">プロンプト・AIエージェント・自動化・GAS・n8n・Claude Code等を主軸とする人材</div>
+        </div>
+        <div class="cluster-count">10</div>
+      </div>
+      <div class="cluster-row">
+        <div class="cluster-icon" style="background:#fdf1e2">🎯</div>
+        <div class="cluster-body">
+          <div class="cluster-name">AI × ディレクション型</div>
+          <div class="cluster-members">AI活用 ＋ 業務設計・クライアント折衝・PM能力を持つ人材。コンサル現場のコア層</div>
+        </div>
+        <div class="cluster-count">13</div>
+      </div>
+      <div class="cluster-row">
+        <div class="cluster-icon" style="background:#e5f4ed">📋</div>
+        <div class="cluster-body">
+          <div class="cluster-name">オンライン秘書・バックオフィス型</div>
+          <div class="cluster-members">事務・秘書・CS・採用など、組織の守りを支える人材。最大勢力</div>
+        </div>
+        <div class="cluster-count">18</div>
+      </div>
+      <div class="cluster-row">
+        <div class="cluster-icon" style="background:#e5f3f3">🎤</div>
+        <div class="cluster-body">
+          <div class="cluster-name">講師・研修・教育型</div>
+          <div class="cluster-members">AIセミナー登壇・研修設計・ファシリテーション。対クライアント研修を直接担える層</div>
+        </div>
+        <div class="cluster-count">9</div>
+      </div>
+      <div class="cluster-row">
+        <div class="cluster-icon" style="background:#fbeae8">🎨</div>
+        <div class="cluster-body">
+          <div class="cluster-name">クリエイティブ型</div>
+          <div class="cluster-members">デザイン・動画・撮影・SNSコンテンツ制作。AI生成ツールを組み合わせた制作対応も可能</div>
+        </div>
+        <div class="cluster-count">8</div>
+      </div>
+      <div class="cluster-row">
+        <div class="cluster-icon" style="background:#edeafb">📈</div>
+        <div class="cluster-body">
+          <div class="cluster-name">営業・マーケ・コンサル型</div>
+          <div class="cluster-members">セールス・SNSマーケ・コンサルティング・事業開発を軸とする人材</div>
+        </div>
+        <div class="cluster-count">8</div>
+      </div>
+    </div>
+    <div class="note">1名が複数クラスターにまたがるため合計は総数と一致しません。</div>
+  </div>
+  <div class="insight">
+    <strong>全体の強み：</strong>バックオフィス型（18名）が組織基盤を支えながら、AI×ディレクション型（13名）が急成長中。AIエンジニア特化型（10名）・講師型（9名）も揃い、クライアントのAX推進を一気通貫でサポートできる体制になっています。
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <strong>株式会社ウツセバ</strong> ／ AIX事業部 ／ クルースキルダッシュボード<br>
+  ※ 氏名・メールアドレス・電話番号・生年月日等の個人情報は含みません。組織横断的な属性情報のみを掲載しています。
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+const ctx = document.getElementById('donutChart').getContext('2d');
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['ウツセバクルー','業務委託','スポット','藤澤紹介','未分類'],
+    datasets: [{
+      data: [47, 11, 3, 1, 4],
+      backgroundColor: ['#2255cc','#1a7a52','#b05c00','#4a2fa0','#c0bdb4'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: false,
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + '名' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
